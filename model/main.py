@@ -1,3 +1,0 @@
-print("Program")
-
-print("Hallo")

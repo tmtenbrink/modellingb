@@ -1,0 +1,14 @@
+\* PatatoChips *\
+Maximize
+Profit: 1.5 Chip_MEXICAN + 2 Chip_PLAIN
+Subject To
+Frying_Time_Available: 5 Chip_MEXICAN + 4 Chip_PLAIN <= 480
+Packing_Time_Available: 2 Chip_MEXICAN + 4 Chip_PLAIN <= 330
+Slice_Time_Available: 4 Chip_MEXICAN + 2 Chip_PLAIN <= 345
+Bounds
+0 <= Chip_MEXICAN
+0 <= Chip_PLAIN
+Generals
+Chip_MEXICAN
+Chip_PLAIN
+End
