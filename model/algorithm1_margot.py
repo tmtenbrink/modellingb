@@ -61,9 +61,19 @@ print(rooms_time)
 print(rooms_op)
 
 #find maximum time in rooms
-overdue = np.amax(rooms_time)-information['capacity']
-print(overdue)
+overdues = np.amax(rooms_time,1)
+
+#initialize total overdue time
+total_max_overdue = 0
+
+#loop over all the maximum overdue times and add the overdue to the total
+for time in overdues:
+    total_max_overdue += time - information['capacity']
+
+print(total_max_overdue)
 print()
+
+
 
 
 
@@ -136,5 +146,13 @@ print(rooms_time)
 print(rooms_op)
 
 #find maximum time in rooms
-overdue = np.amax(rooms_time)-information['capacity']
-print(overdue)
+overdues = np.amax(rooms_time,1)
+
+#initialize total overdue time
+total_max_overdue = 0
+
+#loop over all the maximum overdue times and add the overdue to the total
+for time in overdues:
+    total_max_overdue += time - information['capacity']
+
+print(total_max_overdue)
