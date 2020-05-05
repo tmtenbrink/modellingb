@@ -45,6 +45,7 @@ for i in range(slot_amount):
     slot_sums.append(0)
 
 
+# attempt 1
 def cycle_sequence_assignment():
     # k is next operation room to add surgery to
     k = 0
@@ -74,7 +75,7 @@ def cycle_sequence_assignment():
 
     return schedule, slot_sums
 
-
+# attempt 2
 def min_slot_assignment():
     for i in range(surgery_amount):
         # make it into list to make it
@@ -94,9 +95,9 @@ def min_slot_assignment():
 
     no = 0
     while not all(slot > 480 for slot in slot_sums):
-        print("round:")
+        # print("round:")
         min_slot_i = int(np.argmin(slot_sums))
-        print("min slot: " + str(min_slot_i))
+        # print("min slot: " + str(min_slot_i))
 
         if not min_slot_i in skip_i:
             skip_i.append(min_slot_i)
@@ -109,9 +110,9 @@ def min_slot_assignment():
                     max_sum = slot_sum
                     max_slot_i = i
         if max_slot_i == -1:
-            print("no max found")
+            # print("no max found")
             break
-        print("max slot: " + str(max_slot_i))
+        # print("max slot: " + str(max_slot_i))
         over_slot = slot_sums[max_slot_i] - c
         surgs_max_slot = schedule[max_slot_i]
         small_surgery_i = int(np.argmin(surgs_max_slot[:, 1]))
@@ -119,7 +120,7 @@ def min_slot_assignment():
         small_surgery_duration = df_surg.iloc[small_surgery_id].at['Duration']
         if small_surgery_duration > over_slot:
             skip_i.append(max_slot_i)
-            print("no small surgery, skipping: " + str(max_slot_i))
+            # print("no small surgery, skipping: " + str(max_slot_i))
         else:
             skip_i = []
             surgs_max_slot_list = surgs_max_slot.tolist()
@@ -145,5 +146,18 @@ def min_slot_assignment():
 
 schedule, slot_sums = min_slot_assignment()
 
+for i in range(len(slot_sums)):
+    slot_sums[i] = (i, slot_sums[i])
+
+slot_sums = sorted(slot_sums, key=lambda x: (int(x[1]), int(x[0])))
+day_schedule = list()
+
+for i in range(T):
+    day = list()
+    for j in range(i*R, i*R+R):
+
+        day.append(schedule[j])
+    day_schedule.append(day)
+
 print(slot_sums)
-print(schedule)
+print(day_schedule)
