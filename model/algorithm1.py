@@ -96,9 +96,14 @@ for day in range(T):
             overdue_string = ", not overdue"
         print("Room " + str(room) + ": " + str(room_time) + overdue_string)
         room_surgeries = rooms_op[day, room]
-        for surgery in room_surgeries:
+        for i, surgery in enumerate(room_surgeries):
             surgery_time = surgeries[surgery]
-            print("Surgery " + str(surgery) + " (" + str(surgery_time) + " minutes)", end=', ')
+            if i != 0:
+                sep = ", "
+            else:
+                sep = ""
+            print(sep + "Surgery " + str(surgery) + " (" + str(surgery_time) + " minutes)", end='')
+        print()
 
 print("\n")
 
