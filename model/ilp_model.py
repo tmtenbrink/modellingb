@@ -56,6 +56,8 @@ T = range(1, days_amount+1)
 R = range(1, rooms_amount+1)
 
 schedules = LpVariable.dicts("Schedule", (I, T, R), cat='Binary')
+max_overtimes = LpVariable.dicts("MaxOvertime", T, cat='Continuous')
+room_overtimes = LpVariable.dicts("RoomOvertime", (T, R), cat='continuous')
 
 prob = LpProblem("OperatingRooms", LpMinimize)
 
