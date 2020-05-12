@@ -48,6 +48,7 @@ for a in range(information['days']):
     for b in range(information['number OR']):
         rooms_op[a][b] = []
 
+
 #loop over each operation (sorted high to low)
 for x in op_sort:
     #find the operation room with fewest time spend

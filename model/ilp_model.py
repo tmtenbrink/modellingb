@@ -55,11 +55,24 @@ I = range(1, surgery_amount+1)
 T = range(1, days_amount+1)
 R = range(1, rooms_amount+1)
 
-schedules = LpVariable.dicts("Schedule", (I, T, R), cat='Binary')
-max_overtimes = LpVariable.dicts("MaxOvertime", T, cat='Continuous')
-room_overtimes = LpVariable.dicts("RoomOvertime", (T, R), cat='continuous')
+#make variables
+schedules = LpVariable.dicts("Schedule", (I, T, R), cat='Binary') #constraint 4
+max_overtimes = LpVariable.dicts("MaxOvertime", T, cat='Continuous') #m_t
+room_overtimes = LpVariable.dicts("RoomOvertime", (T, R), lowBound = 0, cat='Continuous') #m_r
 
+#initialize problem
 prob = LpProblem("OperatingRooms", LpMinimize)
 
+#objective function
+prob += lpSum([max_overtimes[t] for t in T])
+
+#constraints
+#constraint 1, 4
 for i in I:
     prob += lpSum([schedules[i][t][r] for t in T for r in R]) == 1
+    
+#constraint 3    
+for t in T:
+    for r in R:
+        prob += max_overtimes[t] => room_overtimes[t][r] =>0
+    
