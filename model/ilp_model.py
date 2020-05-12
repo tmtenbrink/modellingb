@@ -60,4 +60,4 @@ schedules = LpVariable.dicts("Schedule", (I, T, R), cat='Binary')
 prob = LpProblem("OperatingRooms", LpMinimize)
 
 for i in I:
-    prob += lpSum([schedules[i][t, r] for t in T for r in R]) == 1
+    prob += lpSum([schedules[i][t][r] for t in T for r in R]) == 1
