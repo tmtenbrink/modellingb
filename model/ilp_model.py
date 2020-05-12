@@ -45,7 +45,7 @@ c = df_par.loc['Capacity'].iat[0]
 # Get the amount of surgeries by counting the length of the index of the sheet (the 'Surgery' column)
 surgery_amount = len(df_surg.index)
 # Dictionary of surgery times
-surgeries = {}
+surgeries = {} #mu
 for i in range(surgery_amount):
     # The surgeries are identified by numbers, so get the row by index (iloc)
     # This gets a whole row, then get the value at the 'Duration' column (at)
@@ -70,9 +70,20 @@ prob += lpSum([max_overtimes[t] for t in T])
 #constraint 1, 4
 for i in I:
     prob += lpSum([schedules[i][t][r] for t in T for r in R]) == 1
+
+#constraint 2
+for t in T:
+    for r in R:
+            prob += room_overtimes[t][r] - lpSum([surgeries[i]*schedules[i][t][r] for i in I]) + c == 0
     
 #constraint 3    
 for t in T:
     for r in R:
-        prob += max_overtimes[t] => room_overtimes[t][r] =>0
+        prob += max_overtimes[t] >= room_overtimes[t][r]
+
+prop.solve()
+print('Status', LpStatus[prob.status])
+
+
+
     
