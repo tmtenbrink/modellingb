@@ -18,7 +18,7 @@ while ask_dataset:
     try:
         filename = datasets[dataset_choice]
         print("You have chosen the dataset: '" + filename + "'")
-        ask_dataset = False
+        break
     except KeyError:
         print("That is not a valid key Please try again.")
 
@@ -49,7 +49,7 @@ surgeries = {} #mu
 for i in range(surgery_amount):
     # The surgeries are identified by numbers, so get the row by index (iloc)
     # This gets a whole row, then get the value at the 'Duration' column (at)
-    surgeries[i] = int(df_surg.iloc[i].at['Duration'])
+    surgeries[i+1] = int(df_surg.iloc[i].at['Duration'])
 
 I = range(1, surgery_amount+1)
 T = range(1, days_amount+1)
@@ -81,8 +81,13 @@ for t in T:
     for r in R:
         prob += max_overtimes[t] >= room_overtimes[t][r]
 
-prop.solve()
+prob.solve()
 print('Status', LpStatus[prob.status])
+
+for v in prob.variables():
+    print(v.name, '=', v.varValue)
+    
+print('Overtime sum =', value(prob.objective))
 
 
 
