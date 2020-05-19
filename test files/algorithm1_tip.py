@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-filename = 'Data assignment operating room 2 Large.xlsx'
+filename = '../model/Data assignment operating room 2 Large.xlsx'
 
 # Get pandas dataframe of the first sheet called 'General Information'
 # Index the dataframe by the names in the 0th column

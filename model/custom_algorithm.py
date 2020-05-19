@@ -50,6 +50,7 @@ c = df_par.loc['Capacity'].iat[0]
 surgery_amount = len(df_surg.index)
 # Dictionary of surgery times
 surgeries = {}
+
 for i in range(surgery_amount):
     # The surgeries are identified by numbers, so get the row by index (iloc)
     # This gets a whole row, then get the value at the 'Duration' column (at)
