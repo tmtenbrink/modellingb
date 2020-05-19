@@ -3,7 +3,7 @@
 # The program does not require the information from the dataset, so it can be run independently of the dataset
 
 
-def model_result_print(filename):
+def result_print(filename):
     # The file is opened as the variable f
     f = open(filename, "r")
 
@@ -113,7 +113,3 @@ def model_result_print(filename):
             room_overtime_string = "Room " + str(max_overtime_rooms[0]) + " is "
         print("On day " + str(day) + ", " + room_overtime_string + "most overdue, at " + str(max_overtime) +
               " minutes")
-
-
-filename = "output_VeryLarge.txt"
-model_result_print(filename)

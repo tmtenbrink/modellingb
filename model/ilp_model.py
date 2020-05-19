@@ -1,6 +1,6 @@
 from pulp import *
 import pandas as pd
-from model_result_print import *
+from model_result_print import result_print
 
 # List of importable datasets, each with a reference key so one can be chosen
 datasets = {
@@ -134,4 +134,4 @@ if LpStatus[prob.status] == 'Optimal':
     f.close()
 
     # Print result using function in model_result_print.py
-    model_result_print(output_filename)
+    result_print(output_filename)
