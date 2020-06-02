@@ -53,18 +53,29 @@ days_amount = df_par.loc['Number days'].iat[0]
 # Capacity per day per operating room
 c = df_par.loc['Capacity'].iat[0]
 
+o = df_par.loc['Overtime per department'].iat[0]
+
 # Get the amount of surgeries by counting the length of the index of the sheet (the 'Surgery' column)
 surgery_amount = len(df_surg.index)
+set_D = []
+department_surgeries = {}
 # Dictionary of surgery times
 surgeries_duration = {}  # mu
-for i in range(surgery_amount):
-    # The surgeries are identified by numbers, so get the row by index (iloc)
-    # This gets a whole row, then get the value at the 'Duration' column (at)
-    surgeries_duration[i + 1] = int(df_surg.iloc[i].at['Duration'])
+
+# I is the set of surgery numbers
+# The surgeries are identified by numbers, which we want to get
+# We had set the Surgery column to be the index column, so we can get these values by getting the df index values
+set_I = list(df_surg.index.values)
+
+for i in set_I:
+    surgeries_duration[i] = int(df_surg.loc[i].at['Duration'])
+    department = df_surg.loc[i].at['Department']
+    if department not in set_D:
+        set_D.append(department)
+        department_surgeries[department] = {surg_key: 0 for surg_key in set_I}
+    department_surgeries[department][i] = 1
 
 # Get the shape
-# I is the set of surgery numbers
-set_I = range(1, surgery_amount + 1)
 # T is the set of days
 set_T = range(1, days_amount + 1)
 # R is the set of rooms
@@ -81,6 +92,8 @@ max_overtimes = LpVariable.dicts("MaxOvertime", set_T, cat='Integer')
 # room_overtimes is a dictionary containing all the m_r variables, so the overtime of a room r on a day t
 # As the overtime is zero if it is at less than capacity, we want a lower bound of 0, satisfying C3
 room_overtimes = LpVariable.dicts("RoomOvertime", (set_T, set_R), lowBound=0, cat='Integer')
+
+room_departments = LpVariable.dicts("RoomDepartments", (set_T, set_R, set_D), cat='Binary')
 
 # Initialize the problem
 # We seek to minimize the overtime
@@ -101,13 +114,19 @@ for i in set_I:
 # We want this for every room overtime variable m_r, so we loop through all r on all days t
 for t in set_T:
     for r in set_R:
-        prob += room_overtimes[t][r] - lpSum([surgeries_duration[i] * schedule_itr[i][t][r] for i in set_I]) + c == 0
+        prob += room_overtimes[t][r] >= lpSum([surgeries_duration[i] * schedule_itr[i][t][r] for i in set_I]) + lpSum([room_departments[t][r][d]*o for d in set_D])- c
 
 # To be the maximum room overtime, m_t must be larger than all other m_r for the r on that day t, satisfying C4
 # As such, for all m_r, the corresponding m_t must be larger, requiring a constraint for all these
 for t in set_T:
     for r in set_R:
         prob += max_overtimes[t] >= room_overtimes[t][r]
+
+for t in set_T:
+    for r in set_R:
+        for d in set_D:
+            prob += room_departments[t][r][d] >= (1/surgery_amount) * lpSum([schedule_itr[i][t][r] * department_surgeries[d][i] for i in set_I])
+
 
 # If the Gurobi solver is available, use it
 if GUROBI_CMD().available():
