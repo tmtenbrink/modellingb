@@ -1,6 +1,6 @@
 from pulp import *
 import pandas as pd
-from model.model_result_print import result_print
+from model_result_print import result_print
 
 # List of importable datasets, each with a reference key so one can be chosen
 datasets = {
@@ -131,7 +131,7 @@ if LpStatus[prob.status] == 'Optimal':
     # Create list of lines containing all variable names and their values
     lines = [str(v.name) + '=' + str(v.varValue) + "\n" for v in prob.variables()]
     # Append objective function result
-    lines.append('Overtime sum =' + str(value(prob.objective)))
+    lines.append('Overtime sum=' + str(value(prob.objective)))
     # Write lines to file
     f.writelines(lines)
     f.close()

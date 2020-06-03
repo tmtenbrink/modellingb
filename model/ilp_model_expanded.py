@@ -1,6 +1,6 @@
 from pulp import *
 import pandas as pd
-from model.model_result_print import result_print
+from model_result_print import result_print
 
 # List of importable datasets, each with a reference key so one can be chosen
 datasets = {
@@ -144,13 +144,13 @@ print('Status', LpStatus[prob.status])
 # If it was indeed optimally solved, write the output to a text file for later viewing
 if LpStatus[prob.status] == 'Optimal':
     # Define filename using the dataset key used in the choice at the start of this program
-    output_filename = "output_" + data_key_choice + ".txt"
+    output_filename = "output_expanded" + data_key_choice + ".txt"
     # Open file, write mode so it is created if it does not exist
     f = open(output_filename, 'w')
     # Create list of lines containing all variable names and their values
     lines = [str(v.name) + '=' + str(v.varValue) + "\n" for v in prob.variables()]
     # Append objective function result
-    lines.append('Overtime sum =' + str(value(prob.objective)))
+    lines.append('Overtime sum=' + str(value(prob.objective)))
     # Write lines to file
     f.writelines(lines)
     f.close()

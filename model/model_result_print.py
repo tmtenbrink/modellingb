@@ -13,7 +13,9 @@ def result_print(filename):
     # It creates dictionaries corresponding to the model variable dictionaries
     max_overtimes = {}
     room_overtimes = {}
+    rooms_departments = {}
     schedule = {}
+    overtime_sum = 0
 
     # It reads line per line
     for line in lines:
@@ -39,32 +41,46 @@ def result_print(filename):
                 room = int(underscore_split[2])
 
                 # Since shape is unknown beforehand, it must gradually create it
-                # It checks if there is already a key for the day added
-                try:
-                    v = room_overtimes[day]
+                # It checks if there is not already a key for the day added
                 # If there isn't, it will initialize this by setting an empty dictionary which will consist of the rooms
-                # It will also initialize schedule dictionary for that day, also corresponding to the rooms
-                except KeyError:
+                if day not in room_overtimes.keys():
                     room_overtimes[day] = {}
-                    schedule[day] = {}
 
                 # The value is the room overtime, so it sets it at the correct place
                 room_overtimes[day][room] = value
-
-                # It checks now also if a room has been added to the schedule on a certain day
-                try:
-                    v = schedule[day][room]
-                # If not, it creates an empty list where surgeries can be later added to
-                except KeyError:
-                    schedule[day][room] = []
             elif underscore_split[0] == "Schedule":
+                # The surgery number is the first value after the underscore, followed by day, followed by room
+                surgery = int(underscore_split[1])
+                day = int(underscore_split[2])
+                room = int(underscore_split[3])
+
+                # Like room_overtimes, shape is unknown so must be gradually created
+                if day not in schedule.keys():
+                    schedule[day] = {}
+                if room not in schedule[day].keys():
+                    schedule[day][room] = []
                 # If the surgery is indeed scheduled in this room on this day, the value must be equal to 1
                 if value == 1:
-                    surgery = int(underscore_split[1])
-                    day = int(underscore_split[2])
-                    room = int(underscore_split[3])
                     # It adds the surgery number to a list corresponding to a room on a day
                     schedule[day][room].append(surgery)
+            elif underscore_split[0] == "RoomDepartments":
+                # The day is the first value after the underscore, followed by room, followed by department
+                day = int(underscore_split[1])
+                room = int(underscore_split[2])
+                department = underscore_split[3]
+
+                # Like room_overtimes, shape is unknown so must be gradually created
+                if day not in rooms_departments.keys():
+                    rooms_departments[day] = {}
+                if room not in rooms_departments[day].keys():
+                    rooms_departments[day][room] = []
+                # If the department is indeed part of this room, value most be equal to 1
+                if value == 1:
+                    # It adds the department name to a list corresponding to a room on a day
+                    rooms_departments[day][room].append(department)
+
+            if equal_split[0] == "Overtime sum":
+                overtime_sum = value
 
     # Print section
     for day in room_overtimes.keys():
@@ -79,7 +95,7 @@ def result_print(filename):
                 overdue_string = str(room_overtime) + " minutes overtime"
             else:
                 overdue_string = "not overdue"
-            print("Room " + str(room) + ": " + overdue_string)
+            print("ROOM " + str(room) + ": " + overdue_string)
 
             # It prints a list of surgeries in a room
             room_surgeries = schedule[day][room]
@@ -93,9 +109,23 @@ def result_print(filename):
                 print(sep + "Surgery " + str(surgery), end='')
             print()
 
+            if len(rooms_departments) != 0:
+                # It prints a list of departments
+                room_departments = rooms_departments[day][room]
+                for i, department in enumerate(room_departments):
+                    # For the first department, it does not want to put a comma in front
+                    if i == 0:
+                        sep = ""
+                    else:
+                        sep = ", "
+                    # It prints them on one line, separating using sep
+                    print(sep + "Department " + str(department), end='')
+                print("\nNumber of departments: " + str(len(room_departments)))
+
     print("\n")
 
     # Here it prints which rooms are the overdue ones on a certain day
+    total = 0
     for day in room_overtimes.keys():
         max_overtime = max_overtimes[day]
         # It makes a list of the rooms that have the maximum overtime associated with the day
@@ -113,3 +143,6 @@ def result_print(filename):
             room_overtime_string = "Room " + str(max_overtime_rooms[0]) + " is "
         print("On day " + str(day) + ", " + room_overtime_string + "most overdue, at " + str(max_overtime) +
               " minutes")
+        total += max_overtime
+
+    print("Overtime sum: " + str(overtime_sum))
